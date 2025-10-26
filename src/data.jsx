@@ -1,6 +1,6 @@
 const Data = [
   {
-    img: `/food/jollof.jpg`,
+    img: `food/jollof.jpg`,
     rating: '4.8 (32)',
     time: `20-30 mins`,
     food: `Jollof Rice`,
@@ -11,7 +11,7 @@ const Data = [
     reviewer: `Sarah O.`,
   },
   {
-    img: `/food/plates.jpg`,
+    img: `food/plates.jpg`,
     rating: '4.9 (41)',
     time: `25-35 mins`,
     food: `Lamb Stew`,
@@ -22,7 +22,7 @@ const Data = [
     reviewer: `Michael D.`,
   },
   {
-    img: `/food/rice.jpg`,
+    img: `food/rice.jpg`,
     rating: '4.7 (29)',
     time: `20-25 mins`,
     food: `Vegetable Stew`,
@@ -33,7 +33,7 @@ const Data = [
     reviewer: `Ada N.`,
   },
   {
-    img: `/food/riceBeaf.jpg`,
+    img: `food/riceBeaf.jpg`,
     rating: '4.8 (36)',
     time: `20-30 mins`,
     food: `Meat Stew Lamb`,
@@ -43,7 +43,7 @@ const Data = [
     reviewer: `Daniel K.`,
   },
   {
-    img: `/food/spaghetti.jpg`,
+    img: `food/spaghetti.jpg`,
     rating: '4.9 (40)',
     time: `15-25 mins`,
     food: `Oven Baked Pasta`,
@@ -53,7 +53,7 @@ const Data = [
     reviewer: `Blessing A.`,
   },
   {
-    img: `/food/plantain.jpg`,
+    img: `food/plantain.jpg`,
     rating: '5.0 (52)',
     time: `20-25 mins`,
     food: `Rice & Plantain`,
@@ -63,7 +63,7 @@ const Data = [
     reviewer: `Emeka O.`,
   },
   {
-    img: `/food/soup.jpg`,
+    img: `food/soup.jpg`,
     rating: '4.9 (44)',
     time: `25-35 mins`,
     food: `Black Soup`,
