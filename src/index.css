@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Parkinsans:wght@300..800&display=swap');
+@import "tailwindcss";
+
+
+body {
+    background-color: rgba(201, 99, 99, 0.085);
+}
+
+:root {
+  font-family: "Parkinsans", sans-serif;
+}
+
+
+
+
+
+
+/* Fix extra space at sides on mobile/responsive */
+.slick-list {
+  margin: 0 !important;
+}
+
+.slick-slide > div {
+  margin: 9px;
+}
+
+.slider-container {
+  overflow: hidden; /* ensures no overflow or hidden arrows create space */
+}
+
+/* Optional: make sure it aligns properly at small screens */
+@media (max-width: 600px) {
+  .slick-slide {
+    padding: 0 !important;
+  }
+}
