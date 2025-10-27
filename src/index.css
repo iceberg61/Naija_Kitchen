@@ -10,7 +10,12 @@ body {
   font-family: "Parkinsans", sans-serif;
 }
 
-
+.mySwiper {
+  padding-bottom: 0.5rem;
+}
+.swiper-pagination {
+  bottom: 0.25rem;
+}
 
 
 
