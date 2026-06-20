@@ -1,0 +1,99 @@
+/* ============================================
+   animations.css — Naija Kitchen
+   All page animations live here.
+   Components import this once: ../styles/animations.css
+   ============================================ */
+
+/* ------ Entrance animations ------ */
+
+/* Fade up — used for most entrance reveals */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Fade in — used for image/right-side reveals */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Slide in from left — ReviewSection left panel */
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Slide in from right — ReviewSection right panel */
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ------ Float animations (Hero + ReviewSection thumbnails) ------ */
+
+@keyframes floatA {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%       { transform: translateY(-10px) rotate(3deg); }
+}
+
+@keyframes floatB {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%       { transform: translateY(8px) rotate(-2deg); }
+}
+
+/* ------ Utility classes ------ */
+
+.anim-fade-up {
+  animation: fadeUp 0.45s ease-out both;
+}
+
+.anim-fade-in {
+  animation: fadeIn 0.45s ease-out both;
+}
+
+.anim-float-a {
+  animation: floatA 4s ease-in-out infinite;
+  will-change: transform;
+}
+
+.anim-float-b {
+  animation: floatB 5s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* ------ Scroll-reveal classes (used with IntersectionObserver) ------ */
+/* Elements start hidden, .revealed is added by JS when they enter the viewport */
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.reveal-left.revealed,
+.reveal-right.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ------ Reduced motion — respects user system preference ------ */
+@media (prefers-reduced-motion: reduce) {
+  .anim-fade-up,
+  .anim-fade-in,
+  .anim-float-a,
+  .anim-float-b,
+  .reveal-left,
+  .reveal-right {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
