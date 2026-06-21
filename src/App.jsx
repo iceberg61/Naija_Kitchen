@@ -12,6 +12,10 @@ import OrderTrackingPage from "./pages/OrderTrackingPage";
 import CateringPage from "./pages/CateringPage";
 import ReservationPage from "./pages/ReservationPage";
 import AboutPage from "./pages/AboutPage";
+import GalleryPage from "./pages/GalleryPage";
+import ContactPage from "./pages/ContactPage";
+import ReviewsPage from "./pages/ReviewsPage";
+import FAQPage from "./pages/FAQPage";
 
 function Home() {
   return (
@@ -37,6 +41,10 @@ function App() {
           <Route path="/catering"       element={<CateringPage />} />
           <Route path="/reservation"    element={<ReservationPage />} />
           <Route path="/about"          element={<AboutPage />} />
+          <Route path="/gallery"        element={<GalleryPage />} />
+          <Route path="/contact"        element={<ContactPage />} />
+          <Route path="/reviews"        element={<ReviewsPage />} />
+          <Route path="/faq"            element={<FAQPage />} />
         </Route>
       </Routes>
     </CartProvider>

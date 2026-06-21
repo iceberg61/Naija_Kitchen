@@ -1,8 +1,16 @@
 import React from "react";
 import { FaInstagram, FaYoutube, FaXTwitter } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 import FooterBg from "../assets/popular_bg.png";
 import { IoMdSend } from "react-icons/io";
 import "../styles/animations.css";
+
+const quickLinks = [
+  { label: "Home",        href: "/"            },
+  { label: "Gallery",     href: "/gallery"      },
+  { label: "Contact",     href: "/contact"      },
+  { label: "FAQ",         href: "/faq"          },
+];
 
 function Footer() {
   return (
@@ -11,6 +19,7 @@ function Footer() {
       <div className="absolute inset-0 bg-black/80 z-0" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-5 grid md:grid-cols-4 gap-10 anim-fade-up">
+
         {/* About */}
         <div>
           <h2 className="text-2xl font-bold mb-3">
@@ -29,23 +38,36 @@ function Footer() {
           </div>
         </div>
 
-        {/* Quick Links */}
+        {/* Quick Links — now using React Router Link */}
         <div>
-          <h3 className="text-xl font-semibold mb-3 text-red-700">Quick Links</h3>
-          <ul className="space-y-2 text-gray-300">
-            {["Home", "Menu", "Order", "About Us", "Contact"].map((item) => (
-              <li key={item} className="hover:text-white transition-colors cursor-pointer">{item}</li>
+          <h3 className="text-xl font-semibold mb-4 text-red-700">Quick Links</h3>
+          <ul className="space-y-2.5">
+            {quickLinks.map(({ label, href }) => (
+              <li key={href}>
+                <Link
+                  to={href}
+                  className="text-gray-300 hover:text-white text-sm transition-colors hover:translate-x-1 inline-block"
+                >
+                  {label}
+                </Link>
+              </li>
             ))}
           </ul>
         </div>
 
         {/* Opening Hours */}
         <div>
-          <h3 className="text-xl font-semibold mb-3 text-red-700">Opening Hours</h3>
+          <h3 className="text-xl font-semibold mb-4 text-red-700">Opening Hours</h3>
           <ul className="space-y-2 text-gray-300 text-sm">
-            <li className="flex justify-between border-b border-gray-700 pb-1"><span>Mon - Fri</span><span>8:00 AM - 9:00 PM</span></li>
-            <li className="flex justify-between border-b border-gray-700 pb-1"><span>Saturday</span><span>9:00 AM - 10:00 PM</span></li>
-            <li className="flex justify-between"><span>Sunday</span><span>Closed</span></li>
+            <li className="flex justify-between border-b border-gray-700 pb-1">
+              <span>Mon – Fri</span><span>8:00 AM – 9:00 PM</span>
+            </li>
+            <li className="flex justify-between border-b border-gray-700 pb-1">
+              <span>Saturday</span><span>9:00 AM – 10:00 PM</span>
+            </li>
+            <li className="flex justify-between">
+              <span>Sunday</span><span className="text-red-400">Closed</span>
+            </li>
           </ul>
         </div>
 
