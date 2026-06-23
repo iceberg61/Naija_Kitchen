@@ -1,115 +1,180 @@
-import React, { useEffect, useRef } from "react";
-import { FaStar, FaStarHalfAlt } from "react-icons/fa";
-import Data from "../data";
+import React, { useRef, useEffect } from "react";
+import { FaStar, FaQuoteLeft } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import menuData from "../data/menuData";
 import "../styles/animations.css";
 
-const renderStars = (ratingString) => {
-  const rating = parseFloat(ratingString.split(" ")[0]);
-  const reviewCount = ratingString.match(/\((\d+)\)/)?.[1] || "0";
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 >= 0.5;
+// ── Dummy reviews built from menuData ────────────────────────────
+// Each review references a real dish from menuData so images are consistent
+const reviews = [
+  {
+    dishId: 5, // Jollof Rice
+    reviewer: "Emeka Okafor",
+    location: "Abuja",
+    rating: 5,
+    reviewerImg: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80",
+    text: "Party jollof all day! That smoky bottom-pot flavour came through perfectly. My whole family couldn't stop eating.",
+  },
+  {
+    dishId: 1, // Egusi Soup
+    reviewer: "Ngozi Eze",
+    location: "Lagos",
+    rating: 5,
+    reviewerImg: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&q=80",
+    text: "Best egusi I've had outside my mum's kitchen. The meat was tender, the soup was rich. Will definitely order again!",
+  },
+  {
+    dishId: 11, // Suya Skewers
+    reviewer: "Aisha Mustapha",
+    location: "Kaduna",
+    rating: 5,
+    reviewerImg: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=200&q=80",
+    text: "The suya arrived warm and the yaji spice blend was on point. Tasted exactly like northern suya. Highly recommend!",
+  },
+];
 
-  return (
-    <div className="flex items-center gap-2">
-      <div className="flex gap-1">
-        {Array.from({ length: 5 }, (_, i) => {
-          if (i < fullStars) return <FaStar key={i} className="text-yellow-400" />;
-          if (i === fullStars && hasHalfStar) return <FaStarHalfAlt key={i} className="text-yellow-400" />;
-          return <FaStar key={i} className="text-gray-300" />;
-        })}
-      </div>
-      <span className="text-sm text-gray-500">({reviewCount})</span>
-    </div>
-  );
-};
-
-// Intersection Observer hook — triggers CSS class when element enters view
-function useRevealOnScroll(ref) {
+// Intersection Observer — shared across all refs
+function useRevealOnScroll(refs) {
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
+    const elements = refs.map((r) => r.current).filter(Boolean);
+    if (!elements.length) return;
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { el.classList.add("revealed"); observer.disconnect(); } },
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
       { threshold: 0.15 }
     );
-    observer.observe(el);
+    elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, [ref]);
+  }, [refs]);
 }
 
-function ReviewSection() {
-  const leftRef = useRef(null);
+const Stars = ({ rating }) => (
+  <div className="flex gap-0.5">
+    {Array.from({ length: 5 }, (_, i) => (
+      <FaStar key={i} className={i < rating ? "text-yellow-400" : "text-gray-200"} />
+    ))}
+  </div>
+);
+
+export default function ReviewSection() {
+  const leftRef  = useRef(null);
   const rightRef = useRef(null);
+  useRevealOnScroll([leftRef, rightRef]);
 
-  useRevealOnScroll(leftRef);
-  useRevealOnScroll(rightRef);
-
-  useEffect(() => {
-    const images = [Data[0].img, Data[1].img, Data[2].img, ...Data.slice(0, 3).map((d) => d.reviewerIMG)];
-    images.forEach((src) => { const img = new Image(); img.src = src; });
-  }, []);
+  // Feature dish — first review's dish shown large on the left
+  const featureDish   = menuData.find((d) => d.id === reviews[0].dishId);
+  const floatingDishA = menuData.find((d) => d.id === reviews[1].dishId);
+  const floatingDishB = menuData.find((d) => d.id === reviews[2].dishId);
 
   return (
-    <section className="max-w-7xl mx-auto my-12 px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 items-center gap-6 sm:gap-8 lg:gap-12">
-      {/* Left image */}
-      <div ref={leftRef} className="relative reveal-left">
-        <img
-          src={Data[0].img}
-          alt={`Photo of ${Data[0].food}`}
-          className="w-full h-[350px] sm:h-[400px] lg:h-[450px] object-cover rounded-3xl shadow-lg"
-          loading="lazy"
-        />
-        <img
-          src={Data[1].img}
-          alt={`Photo of ${Data[1].food}`}
-          className="absolute top-4 right-4 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 object-cover rounded-full shadow-md border-2 border-white anim-float-a"
-        />
-        <img
-          src={Data[2].img}
-          alt={`Photo of ${Data[2].food}`}
-          className="absolute bottom-4 left-4 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 object-cover rounded-full shadow-md border-2 border-white anim-float-b"
-        />
+    <section className="max-w-7xl mx-auto my-16 px-4 sm:px-6 lg:px-8">
+
+      {/* Section heading */}
+      <div className="text-center mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold">
+          <span className="bg-linear-to-r from-red-800 to-red-500 bg-clip-text text-transparent">
+            Happy Faces,
+          </span>{" "}
+          Full Plates 🍽️
+        </h2>
+        <p className="text-gray-500 text-sm mt-3 max-w-md mx-auto">
+          Real words from real Naija food lovers across the country.
+        </p>
       </div>
 
-      {/* Right reviews */}
-      <div ref={rightRef} className="reveal-right">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 tracking-tight">
-          <span className="bg-gradient-to-r from-red-800 to-red-600 bg-clip-text text-transparent">Happy Faces,</span>{" "}
-          Full Plates 🍽️
-        </h1>
-        <p className="text-gray-600 text-sm sm:text-base lg:text-lg mb-6 max-w-md">
-          Hear from our delighted customers about their favorite meals!
-        </p>
+      <div className="grid md:grid-cols-2 items-center gap-8 lg:gap-14">
 
-        <div className="space-y-4">
-          {Data.slice(0, 3).map((item, i) => (
-            <div
-              key={i}
-              className="bg-white p-4 sm:p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-100 anim-fade-up"
-              style={{ animationDelay: `${i * 0.08}s`, animationFillMode: "both" }}
-              role="article"
-              aria-label={`Review by ${item.reviewer}`}
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <img src={item.reviewerIMG} alt={`Photo of ${item.reviewer}`} className="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-full border border-gray-200" loading="lazy" />
-                <div>
-                  <h3 className="font-semibold text-base sm:text-lg text-gray-800">{item.food}</h3>
-                  <p className="text-xs sm:text-sm text-gray-500">{item.extra}</p>
-                </div>
-              </div>
-              {renderStars(item.rating)}
-              <p className="text-gray-600 text-sm sm:text-base italic my-2">"{item.review}"</p>
-              <p className="text-gray-500 text-xs sm:text-sm font-medium">— {item.reviewer}</p>
+        {/* ── Left — feature dish image ─────────────────────── */}
+        <div ref={leftRef} className="relative reveal-left">
+          {/* Main image */}
+          <div className="relative rounded-3xl overflow-hidden shadow-xl h-85 sm:h-100 lg:h-115">
+            <img
+              src={featureDish?.img}
+              alt={featureDish?.name}
+              className="w-full h-full object-cover"
+              loading="eager"
+              fetchPriority="high"
+            />
+            {/* Overlay with dish info */}
+            <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/70 to-transparent p-5">
+              <span className="text-white/70 text-xs uppercase tracking-widest">{featureDish?.category}</span>
+              <p className="text-white font-bold text-lg">{featureDish?.name}</p>
+              <p className="text-white/80 text-xs">₦{featureDish?.price.toLocaleString()}</p>
             </div>
-          ))}
+          </div>
+
+          {/* Floating thumbnail A */}
+          <div className="absolute -top-4 -right-4 md:top-4 md:-right-6 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-4 border-white shadow-lg anim-float-a">
+            <img src={floatingDishA?.img} alt={floatingDishA?.name} className="w-full h-full object-cover" loading="lazy" />
+          </div>
+
+          {/* Floating thumbnail B */}
+          <div className="absolute -bottom-4 -left-4 md:bottom-4 md:-left-6 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-4 border-white shadow-lg anim-float-b">
+            <img src={floatingDishB?.img} alt={floatingDishB?.name} className="w-full h-full object-cover" loading="lazy" />
+          </div>
         </div>
 
-        <a href="/reviews" className="mt-6 inline-block px-4 py-2 bg-red-800 text-white rounded-full text-sm font-medium hover:bg-red-700 transition-colors active:scale-95">
-          See More Reviews
-        </a>
+        {/* ── Right — review cards ──────────────────────────── */}
+        <div ref={rightRef} className="reveal-right flex flex-col gap-4 pt-6 md:pt-0">
+          {reviews.map((r, i) => {
+            const dish = menuData.find((d) => d.id === r.dishId);
+            return (
+              <div
+                key={i}
+                className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-100 anim-fade-up"
+                style={{ animationDelay: `${i * 0.08}s`, animationFillMode: "both" }}
+              >
+                <FaQuoteLeft className="text-red-100 text-2xl mb-2" />
+
+                <p className="text-gray-600 text-sm italic leading-relaxed mb-3">"{r.text}"</p>
+
+                <div className="flex items-center justify-between">
+                  {/* Reviewer */}
+                  <div className="flex items-center gap-2.5">
+                    <img
+                      src={r.reviewerImg}
+                      alt={r.reviewer}
+                      className="w-9 h-9 rounded-full object-cover border border-gray-100"
+                      loading="lazy"
+                    />
+                    <div>
+                      <p className="font-semibold text-gray-800 text-sm">{r.reviewer}</p>
+                      <p className="text-gray-400 text-xs">{r.location}</p>
+                    </div>
+                  </div>
+
+                  {/* Dish image + stars */}
+                  <div className="flex flex-col items-end gap-1">
+                    <div className="flex items-center gap-1.5">
+                      <img
+                        src={dish?.img}
+                        alt={dish?.name}
+                        className="w-7 h-7 rounded-lg object-cover"
+                        loading="lazy"
+                      />
+                      <span className="text-xs text-gray-500 font-medium">{dish?.name}</span>
+                    </div>
+                    <Stars rating={r.rating} />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+          <Link
+            to="/reviews"
+            className="self-start mt-2 inline-flex items-center gap-2 bg-red-800 hover:bg-red-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors active:scale-95"
+          >
+            See All Reviews →
+          </Link>
+        </div>
       </div>
     </section>
   );
 }
-
-export default ReviewSection;

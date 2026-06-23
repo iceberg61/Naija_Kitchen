@@ -1,32 +1,31 @@
 import React, { useState } from "react";
 import { HiX } from "react-icons/hi";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
+import menuData from "../data/menuData";
 
-// ── Gallery data ─────────────────────────────────────────────────
-const images = [
-  { id: 1,  src: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800&q=80", alt: "Jollof Rice",         category: "Rice",   tall: true  },
-  { id: 2,  src: "https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=800&q=80", alt: "Egusi Soup",         category: "Soups",  tall: false },
-  { id: 3,  src: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&q=80", alt: "Akara",               category: "Snacks", tall: false },
-  { id: 4,  src: "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=800&q=80", alt: "Suya Skewers",       category: "Snacks", tall: true  },
-  { id: 5,  src: "https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80", alt: "Banga Soup",         category: "Soups",  tall: false },
-  { id: 6,  src: "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=800&q=80", alt: "Fried Rice",         category: "Rice",   tall: true  },
-  { id: 7,  src: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=800&q=80", alt: "Puff Puff",          category: "Snacks", tall: false },
-  { id: 8,  src: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=800&q=80", alt: "Zobo Drink",         category: "Drinks", tall: false },
-  { id: 9,  src: "https://images.unsplash.com/photo-1574484284002-952d92456975?w=800&q=80", alt: "Ofada Rice",         category: "Rice",   tall: true  },
-  { id: 10, src: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80", alt: "Ofe Onugbu",         category: "Soups",  tall: false },
-  { id: 11, src: "https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=800&q=80", alt: "Pepper Soup",        category: "Soups",  tall: true  },
-  { id: 12, src: "https://images.unsplash.com/photo-1587334207407-99e44e5f5e72?w=800&q=80", alt: "Fried Plantain",     category: "Snacks", tall: false },
-  { id: 13, src: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=800&q=80", alt: "Kunu Aya",           category: "Drinks", tall: false },
-  { id: 14, src: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80", alt: "White Rice & Stew",  category: "Rice",   tall: true  },
-  { id: 15, src: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=800&q=80", alt: "Kitchen Prep",       category: "Behind the Scenes", tall: false },
-  { id: 16, src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80", alt: "Dining Experience",  category: "Behind the Scenes", tall: true  },
+// ── Build gallery images from menuData + extra behind-the-scenes ──
+const dishImages = menuData.map((dish) => ({
+  id:       dish.id,
+  src:      dish.img,
+  alt:      dish.name,
+  category: dish.category,
+  tall:     dish.id % 3 === 0, 
+}));
+
+// Behind the scenes 
+
+const behindScenes = [
+  { id: 101, src: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=800&q=80", alt: "Kitchen Prep",      category: "Behind the Scenes", tall: false },
+  { id: 102, src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80", alt: "Dining Experience", category: "Behind the Scenes", tall: true  },
 ];
+
+const images = [...dishImages, ...behindScenes];
 
 const categories = ["All", "Rice", "Soups", "Snacks", "Drinks", "Behind the Scenes"];
 
 export default function GalleryPage() {
   const [activeCategory, setActiveCategory] = useState("All");
-  const [lightbox, setLightbox]             = useState(null); // index in filtered array
+  const [lightbox, setLightbox]             = useState(null);
 
   const filtered = activeCategory === "All"
     ? images
@@ -34,10 +33,15 @@ export default function GalleryPage() {
 
   const openLightbox  = (i) => setLightbox(i);
   const closeLightbox = () => setLightbox(null);
-  const prevImg = () => setLightbox((i) => (i - 1 + filtered.length) % filtered.length);
-  const nextImg = () => setLightbox((i) => (i + 1) % filtered.length);
+  const prevImg = React.useCallback(
+    () => setLightbox((i) => (i - 1 + filtered.length) % filtered.length),
+    [filtered.length]
+  );
+  const nextImg = React.useCallback(
+    () => setLightbox((i) => (i + 1) % filtered.length),
+    [filtered.length]
+  );
 
-  // Keyboard navigation
   React.useEffect(() => {
     const onKey = (e) => {
       if (lightbox === null) return;
@@ -47,7 +51,7 @@ export default function GalleryPage() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [lightbox, filtered.length]);
+  }, [lightbox, prevImg, nextImg]);
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
@@ -107,8 +111,7 @@ export default function GalleryPage() {
                 }`}
                 loading="lazy"
               />
-              {/* Hover overlay */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 rounded-2xl flex items-end p-4 opacity-0 group-hover:opacity-100">
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/35 transition-all duration-300 rounded-2xl flex items-end p-4 opacity-0 group-hover:opacity-100">
                 <div>
                   <p className="text-white font-semibold text-sm">{img.alt}</p>
                   <p className="text-white/70 text-xs">{img.category}</p>
@@ -125,23 +128,12 @@ export default function GalleryPage() {
           className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center px-4"
           onClick={closeLightbox}
         >
-          {/* Close */}
-          <button
-            onClick={closeLightbox}
-            className="absolute top-5 right-5 text-white text-3xl hover:text-red-400 transition-colors z-10"
-          >
+          <button onClick={closeLightbox} className="absolute top-5 right-5 text-white text-3xl hover:text-red-400 transition-colors z-10">
             <HiX />
           </button>
-
-          {/* Prev */}
-          <button
-            onClick={(e) => { e.stopPropagation(); prevImg(); }}
-            className="absolute left-4 text-white text-4xl hover:text-red-400 transition-colors z-10 p-2"
-          >
+          <button onClick={(e) => { e.stopPropagation(); prevImg(); }} className="absolute left-4 text-white text-4xl hover:text-red-400 transition-colors z-10 p-2">
             <MdArrowBackIos />
           </button>
-
-          {/* Image */}
           <div onClick={(e) => e.stopPropagation()} className="max-w-4xl max-h-[85vh] w-full">
             <img
               src={filtered[lightbox].src}
@@ -154,12 +146,7 @@ export default function GalleryPage() {
               <p className="text-white/40 text-xs mt-1">{lightbox + 1} / {filtered.length}</p>
             </div>
           </div>
-
-          {/* Next */}
-          <button
-            onClick={(e) => { e.stopPropagation(); nextImg(); }}
-            className="absolute right-4 text-white text-4xl hover:text-red-400 transition-colors z-10 p-2"
-          >
+          <button onClick={(e) => { e.stopPropagation(); nextImg(); }} className="absolute right-4 text-white text-4xl hover:text-red-400 transition-colors z-10 p-2">
             <MdArrowForwardIos />
           </button>
         </div>
